@@ -1,4 +1,7 @@
-def menu():
+from datetime import datetime
+
+
+def menu(colecao):
     while True:
         print("\n=== TO-DO LIST MONGODB ===")
         print("1. Adicionar Tarefa")
@@ -12,7 +15,7 @@ def menu():
         opcao = input("Escolha uma opção: ")
         
         if opcao == '1':
-            criar_tarefa()
+            criar_tarefa(colecao)
         elif opcao == '2':
             listar_tarefas()
         elif opcao == '3':
@@ -28,4 +31,26 @@ def menu():
             break
         else:
             print("Opção inválida!")
+
+
+def criar_tarefa(colecao):
+    print("--- NOVA-TAREFA ---")
+
+    titulo_in = input("Titulo: ")
+    descricao_in = input("Descricao: ")
+    tag_in = input("Tags: ")
+
+    lista_tag = {tag.strip() for tag in tag_in.split(",")}
+
+    nova_tarefa = {
+        "titulo":titulo_in,
+        "descricao":descricao_in,
+        "status":"pendente",
+        "data_criacao":datetime.now(),
+        "tags":lista_tag
+    }
+
+    colecao.insert_one(nova_tarefa)
+    print("Tarefa Inserida com Sucesso !")
+
 
