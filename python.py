@@ -1,3 +1,2 @@
-a = 0
-
-print(a)
+nome = "a"
+print(nome)
