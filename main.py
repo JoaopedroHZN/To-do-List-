@@ -7,4 +7,3 @@ colecao = db.get_collection('tarefas')
 
 
 menu(colecao)
-

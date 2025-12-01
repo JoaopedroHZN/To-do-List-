@@ -22,9 +22,9 @@ def menu(colecao):
         elif opcao == '4':
             atualizar_tarefa(colecao)
         elif opcao == '5':
-            adicionar_comentario()
+            adicionar_comentario(colecao)
         elif opcao == '6':
-            excluir_tarefa()
+            excluir_tarefa(colecao)
         elif opcao == '0':
             print("Saindo...")
             break
@@ -44,7 +44,7 @@ def criar_tarefa(colecao):
         "descricao":descricao_in,
         "status":"pendente",
         "data_criacao":str(date.today()),
-        "tags":lista_tag
+        "tags":lista_tag,
     }
 
     colecao.insert_one(nova_tarefa)
@@ -59,6 +59,14 @@ def listar_tarefas(colecao):
                 print(f"Status: {t['status']}")
                 print(f"Data: {t['data_criacao']}")
                 print(f"Tags: {t.get('tags', 'Sem tags')}")
+                lista_comentarios = t.get('comentarios', [])
+                if len(lista_comentarios) > 0:
+                    print("Comentários:")
+                    for c in lista_comentarios:
+                        mensagem = c.get('texto', 'Sem mensagem') 
+                        print(f"   - {mensagem}")
+                else:
+                    print("Comentários: Nenhum")
                 print("-" * 30)
 
 def busca_avancada(colecao):
@@ -109,7 +117,7 @@ def atualizar_tarefa(colecao):
     print("4- Tags")
     opcao = input("Escolha uma opcao para Atualizar: ")
     if opcao == '1' :
-        titulo_ant = input("Titulo Antigo: ");
+        titulo_ant = input("Titulo Antigo: ")
         novo_titulo = input("Novo Titulo: ")
         filtro = ({"titulo":titulo_ant})
         novo_dado = ({"$set": {"titulo": novo_titulo}})
@@ -146,3 +154,31 @@ def atualizar_tarefa(colecao):
         novo_dado = ({"$set": {"tags.$":tag_novo}})
         colecao.update_one(filtro,novo_dado)
         print(f"Tarefa: Titulo: {titulo_in} com a Tag {tag_ant} mudou para {tag_novo}")
+
+def excluir_tarefa(colecao):
+    deletar = input("Titulo da tarefa a ser excluida: ")
+    resultado = colecao.delete_one({"titulo": deletar})
+    if resultado.deleted_count > 0:
+        print("Tarefa Excluida")
+    else:
+        print("Tarefa Não encontrada")
+
+def adicionar_comentario(colecao):
+    titulo = input("Titulo da tarefa para colocar comentario: ")
+    resultado = colecao.find_one({"titulo": titulo})
+    comentario = input("Digite seu comentario: ")
+
+    if resultado != None:
+        colecao.update_one(
+        {"titulo": titulo}, 
+            {
+            "$push": {
+                "comentarios": {
+                    "texto": comentario
+                }
+            }
+        }
+    )
+        print("Comentario adicionado!")
+    else:
+        print("Tarefa nao encontrada")
