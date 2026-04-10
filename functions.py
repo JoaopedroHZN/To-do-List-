@@ -10,6 +10,7 @@ def menu(colecao):
         print("5. Adicionar Comentário")
         print("6. Excluir Tarefa")
         print("0. Sair")
+        print("-----------------------------")
         
         opcao = input("Escolha uma opção: ")
         
